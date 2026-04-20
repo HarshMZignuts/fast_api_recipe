@@ -1,10 +1,8 @@
 from sqlalchemy.orm import Session
 from app.models.auth import User
 from app.schemas.auth import UserCreate
-from passlib.context import CryptContext
 from app.core.config import settings
-
-bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+from app.core.security import bcrypt_context
 
 def create_user_db(db: Session, user: UserCreate):
     db_user = User(

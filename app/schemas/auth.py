@@ -59,8 +59,17 @@ class UserResponse(BaseModel):
     user_name: str
     first_name: str
     last_name: str
+    phone_code:str
     phone_number: str
     email: str
+    access_token: str
 
     class Config:
         from_attributes = True 
+
+    
+class UserLoginRequest(BaseModel):
+    user_name: str
+    password: str
+    
+
