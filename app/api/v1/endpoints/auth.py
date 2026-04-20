@@ -29,7 +29,7 @@ def authenticate_user(user_name:str,password:str,db):
 @router.post("/create-user",status_code=status.HTTP_201_CREATED,response_model=APIResponse)
 async def create_user(user:UserCreate,db:db_dependancy):
     existing_user = db.query(User).filter(User.user_name == user.user_name).first()
-    existing_phone_number = db.query(User).filter(User.phone_code == user.phone_code).filter(User.phone_number == User.phone_number).first()
+    existing_phone_number = db.query(User).filter(User.phone_code == user.phone_code).filter(User.phone_number == user.phone_number).first()
     existing_email = db.query(User).filter(User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User name already exists")

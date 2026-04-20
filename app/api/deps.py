@@ -6,6 +6,7 @@ from app.core.security import oauth2_bearer
 from jose import JWTError, jwt
 from app.core.config import settings
 from app.models.auth import User
+from uuid import UUID
 
 def get_db():
     db = SessionLocal()
@@ -29,7 +30,7 @@ def get_current_user(
             algorithms=[settings.ALGORITHM]
         )
 
-        user_id: str = payload.get("user_id")
+        user_id: str = payload.get("id")
 
         if user_id is None:
             raise HTTPException(
@@ -37,13 +38,14 @@ def get_current_user(
                 detail="Invalid token"
             )
 
-    except JWTError:
+    except JWTError as e:
+        print("JWT ERROR:", str(e))
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token is invalid or expired"
         )
-
-    user = db.query(User).filter(User.id == user_id).first()
+    id = UUID(user_id)
+    user = db.query(User).filter(User.id == id).first()
 
     if user is None:
         raise HTTPException(

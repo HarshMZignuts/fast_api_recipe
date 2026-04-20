@@ -17,13 +17,26 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
 from fastapi.exceptions import RequestValidationError
 
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    cleaned_errors = []
+
+    for err in exc.errors():
+        err_copy = err.copy()
+
+        # remove or convert non-serializable objects
+        if "ctx" in err_copy:
+            err_copy["ctx"] = {
+                k: str(v) for k, v in err_copy["ctx"].items()
+            }
+
+        cleaned_errors.append(err_copy)
+
     return JSONResponse(
         status_code=422,
         content= APIResponse(
             is_error= True,
             status= 422,
             message= "Validation error",
-            data= exc.errors()
+            data= cleaned_errors
         ).model_dump() 
 
     )
