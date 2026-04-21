@@ -6,15 +6,18 @@ from app.api.deps import get_db, get_current_user
 from typing import Annotated
 from starlette import status
 from app.schemas.recipe import RecipeCreate,RecipeResponse,RecipeUpdate
-from app.crud.recipe import add_recipe_db,get_all_recipes_db,get_recipe_by_recipe_id_db,update_recipe_db,soft_delete_recipe_db,get_user_all_recipe_db
+from app.crud.recipe import add_recipe_db,get_all_recipes_db,get_recipe_by_recipe_id_db,update_recipe_db,soft_delete_recipe_db,get_user_all_recipe_db,get_all_recipe_pagin
 from uuid import UUID
 from app.models.auth import User
 import json
+from fastapi_pagination import Page, add_pagination, paginate, Params
 
 router = APIRouter()
 
 db_dependancy = Annotated[Session,Depends(get_db)]
 current_user_dependancy = Annotated[User,Depends(get_current_user)]
+# important for pagination params page and size
+pagination_params_dependancy = Annotated[Params,Depends()]
 
 @router.post("/add-recipe",status_code=status.HTTP_201_CREATED)
 async def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_user:current_user_dependancy):
@@ -79,6 +82,25 @@ async def get_my_recipes(db: db_dependancy,current_user:current_user_dependancy)
         message="Recipe fetch successfully",
         data=user_all_recipe_data
     )
+
+@router.get("/get-recipe-pagination",status_code=status.HTTP_200_OK,response_model=APIResponse[Page[RecipeResponse]])
+async def get_all_recipe_pagination(db: db_dependancy,current_user:current_user_dependancy,params:pagination_params_dependancy):
+    if current_user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')
+    recipe_pagin_data = get_all_recipe_pagin(db=db,params=params)
+
+    for r in recipe_pagin_data.items:
+        if isinstance(r.ingredients,str):
+            r.ingredients = json.loads(r.ingredients)
+    
+    return  APIResponse(
+        is_error=False,
+        status= 200,
+        message="Recipe fetch successfully",
+        data=recipe_pagin_data
+    )
+
+
 
 @router.get("/{recipe_id}",status_code=status.HTTP_200_OK,response_model=APIResponse[RecipeResponse])
 async def get_recipe(db: db_dependancy,current_user:current_user_dependancy,recipe_id:UUID):

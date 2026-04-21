@@ -1,10 +1,13 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from app.models.recipe import Recipe
 from app.schemas.recipe import RecipeCreate, RecipeUpdate
 from app.core.config import settings
 from app.core.security import bcrypt_context
 from uuid import UUID
 import json
+from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination import Page, Params
 
 def add_recipe_db(db: Session, recipe_request:RecipeCreate,user_id:UUID):
     db_recipe = Recipe(
@@ -61,5 +64,8 @@ def soft_delete_recipe_db(db:Session,recipe_id:UUID):
 def get_user_all_recipe_db(db: Session,user_id:UUID):
     recipe = db.query(Recipe).filter(Recipe.user_id == user_id,Recipe.is_deleted == False)
     return recipe
+
+def get_all_recipe_pagin(db: Session,params: Params) -> Page[Recipe]:
+    return paginate(db, select(Recipe).where(Recipe.is_deleted == False).order_by(Recipe.created_at),params)
 
 

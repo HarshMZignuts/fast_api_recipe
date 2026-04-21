@@ -129,6 +129,14 @@
         "documentation": {}
     },
     {
+        "label": "select",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
         "label": "Column",
         "importPath": "sqlalchemy",
         "description": "sqlalchemy",
@@ -737,6 +745,14 @@
         "documentation": {}
     },
     {
+        "label": "get_all_recipe_pagin",
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "isExtraImport": true,
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
         "label": "uuid",
         "kind": 6,
         "isExtraImport": true,
@@ -800,6 +816,62 @@
         "importPath": "json",
         "description": "json",
         "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "Page",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "add_pagination",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "paginate",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "Params",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "Page",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "Params",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "add_pagination",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
         "documentation": {}
     },
     {
@@ -968,6 +1040,14 @@
         "description": "app.models.recipe",
         "isExtraImport": true,
         "detail": "app.models.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "paginate",
+        "importPath": "fastapi_pagination.ext.sqlalchemy",
+        "description": "fastapi_pagination.ext.sqlalchemy",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination.ext.sqlalchemy",
         "documentation": {}
     },
     {
@@ -1193,7 +1273,7 @@
         "kind": 5,
         "importPath": "app.api.v1.endpoints.recipe",
         "description": "app.api.v1.endpoints.recipe",
-        "peekOfCode": "router = APIRouter()\ndb_dependancy = Annotated[Session,Depends(get_db)]\ncurrent_user_dependancy = Annotated[User,Depends(get_current_user)]\n@router.post(\"/add-recipe\",status_code=status.HTTP_201_CREATED)\nasync def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_user:current_user_dependancy):\n    if current_user is None:\n        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')\n    recipe = add_recipe_db(db=db,recipe_request=recipe_request,user_id=current_user.id)\n    if recipe is None:\n        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe is not created')",
+        "peekOfCode": "router = APIRouter()\ndb_dependancy = Annotated[Session,Depends(get_db)]\ncurrent_user_dependancy = Annotated[User,Depends(get_current_user)]\n# important for pagination params page and size\npagination_params_dependancy = Annotated[Params,Depends()]\n@router.post(\"/add-recipe\",status_code=status.HTTP_201_CREATED)\nasync def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_user:current_user_dependancy):\n    if current_user is None:\n        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')\n    recipe = add_recipe_db(db=db,recipe_request=recipe_request,user_id=current_user.id)",
         "detail": "app.api.v1.endpoints.recipe",
         "documentation": {}
     },
@@ -1202,7 +1282,7 @@
         "kind": 5,
         "importPath": "app.api.v1.endpoints.recipe",
         "description": "app.api.v1.endpoints.recipe",
-        "peekOfCode": "db_dependancy = Annotated[Session,Depends(get_db)]\ncurrent_user_dependancy = Annotated[User,Depends(get_current_user)]\n@router.post(\"/add-recipe\",status_code=status.HTTP_201_CREATED)\nasync def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_user:current_user_dependancy):\n    if current_user is None:\n        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')\n    recipe = add_recipe_db(db=db,recipe_request=recipe_request,user_id=current_user.id)\n    if recipe is None:\n        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe is not created')\n    return APIResponse(",
+        "peekOfCode": "db_dependancy = Annotated[Session,Depends(get_db)]\ncurrent_user_dependancy = Annotated[User,Depends(get_current_user)]\n# important for pagination params page and size\npagination_params_dependancy = Annotated[Params,Depends()]\n@router.post(\"/add-recipe\",status_code=status.HTTP_201_CREATED)\nasync def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_user:current_user_dependancy):\n    if current_user is None:\n        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')\n    recipe = add_recipe_db(db=db,recipe_request=recipe_request,user_id=current_user.id)\n    if recipe is None:",
         "detail": "app.api.v1.endpoints.recipe",
         "documentation": {}
     },
@@ -1211,7 +1291,16 @@
         "kind": 5,
         "importPath": "app.api.v1.endpoints.recipe",
         "description": "app.api.v1.endpoints.recipe",
-        "peekOfCode": "current_user_dependancy = Annotated[User,Depends(get_current_user)]\n@router.post(\"/add-recipe\",status_code=status.HTTP_201_CREATED)\nasync def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_user:current_user_dependancy):\n    if current_user is None:\n        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')\n    recipe = add_recipe_db(db=db,recipe_request=recipe_request,user_id=current_user.id)\n    if recipe is None:\n        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe is not created')\n    return APIResponse(\n        is_error=False,",
+        "peekOfCode": "current_user_dependancy = Annotated[User,Depends(get_current_user)]\n# important for pagination params page and size\npagination_params_dependancy = Annotated[Params,Depends()]\n@router.post(\"/add-recipe\",status_code=status.HTTP_201_CREATED)\nasync def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_user:current_user_dependancy):\n    if current_user is None:\n        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')\n    recipe = add_recipe_db(db=db,recipe_request=recipe_request,user_id=current_user.id)\n    if recipe is None:\n        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe is not created')",
+        "detail": "app.api.v1.endpoints.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "pagination_params_dependancy",
+        "kind": 5,
+        "importPath": "app.api.v1.endpoints.recipe",
+        "description": "app.api.v1.endpoints.recipe",
+        "peekOfCode": "pagination_params_dependancy = Annotated[Params,Depends()]\n@router.post(\"/add-recipe\",status_code=status.HTTP_201_CREATED)\nasync def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_user:current_user_dependancy):\n    if current_user is None:\n        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')\n    recipe = add_recipe_db(db=db,recipe_request=recipe_request,user_id=current_user.id)\n    if recipe is None:\n        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe is not created')\n    return APIResponse(\n        is_error=False,",
         "detail": "app.api.v1.endpoints.recipe",
         "documentation": {}
     },
@@ -1400,7 +1489,16 @@
         "kind": 2,
         "importPath": "app.crud.recipe",
         "description": "app.crud.recipe",
-        "peekOfCode": "def get_user_all_recipe_db(db: Session,user_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.user_id == user_id,Recipe.is_deleted == False)\n    return recipe",
+        "peekOfCode": "def get_user_all_recipe_db(db: Session,user_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.user_id == user_id,Recipe.is_deleted == False)\n    return recipe\ndef get_all_recipe_pagin(db: Session,params: Params) -> Page[Recipe]:\n    return paginate(db, select(Recipe).where(Recipe.is_deleted == False).order_by(Recipe.created_at),params)",
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "get_all_recipe_pagin",
+        "kind": 2,
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "peekOfCode": "def get_all_recipe_pagin(db: Session,params: Params) -> Page[Recipe]:\n    return paginate(db, select(Recipe).where(Recipe.is_deleted == False).order_by(Recipe.created_at),params)",
         "detail": "app.crud.recipe",
         "documentation": {}
     },
@@ -1508,7 +1606,7 @@
         "kind": 5,
         "importPath": "app.main",
         "description": "app.main",
-        "peekOfCode": "app = FastAPI()\nBase.metadata.create_all(bind=engine)\napp.include_router(api_router, prefix=\"/api/v1\")\napp.add_exception_handler(HTTPException, custom_http_exception_handler)\napp.add_exception_handler(RequestValidationError, validation_exception_handler)",
+        "peekOfCode": "app = FastAPI()\nadd_pagination(app)\nBase.metadata.create_all(bind=engine)\napp.include_router(api_router, prefix=\"/api/v1\")\napp.add_exception_handler(HTTPException, custom_http_exception_handler)\napp.add_exception_handler(RequestValidationError, validation_exception_handler)",
         "detail": "app.main",
         "documentation": {}
     }
