@@ -6,7 +6,7 @@ from app.api.deps import get_db, get_current_user
 from typing import Annotated
 from starlette import status
 from app.schemas.recipe import RecipeCreate,RecipeResponse,RecipeUpdate
-from app.crud.recipe import add_recipe_db,get_all_recipes_db,get_recipe_by_recipe_id_db,update_recipe_db
+from app.crud.recipe import add_recipe_db,get_all_recipes_db,get_recipe_by_recipe_id_db,update_recipe_db,soft_delete_recipe_db
 from uuid import UUID
 from app.models.auth import User
 import json
@@ -48,7 +48,7 @@ async def add_recipe(recipe_request: RecipeCreate, db: db_dependancy,current_use
 async def get_all_recipes(db: db_dependancy,current_user:current_user_dependancy):
      if current_user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')
-     
+
      recipes = get_all_recipes_db(db=db)
      for r in recipes:
         r.ingredients = json.loads(r.ingredients)
@@ -80,9 +80,9 @@ async def update_recipe(db: db_dependancy,current_user:current_user_dependancy,r
     if current_user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')
     recipe = get_recipe_by_recipe_id_db(db=db,recipe_id=recipe_id)
-    not_user_recipe = recipe.user_id != current_user.id
     if recipe is None:
          raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe not found.')
+    not_user_recipe = recipe.user_id != current_user.id
     if not_user_recipe:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='This recipe does not belong to you.')
     
@@ -96,6 +96,29 @@ async def update_recipe(db: db_dependancy,current_user:current_user_dependancy,r
          message="Recipe update successfully",
          data=updated_recipe_data
      )
+
+
+@router.delete("/{recipe_id}",status_code=status.HTTP_200_OK,response_model=APIResponse)
+async def delete_recipe(db:db_dependancy,current_user:current_user_dependancy,recipe_id:UUID):
+    recipe = get_recipe_by_recipe_id_db(db=db,recipe_id=recipe_id)
+    if recipe is None:
+         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe not found.')
+    not_user_recipe = recipe.user_id != current_user.id
+    if not_user_recipe:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='This recipe does not belong to you, you can\'t delete it.')
+    
+    delete_recipe_data = soft_delete_recipe_db(db=db,recipe_id=recipe_id)
+
+    if delete_recipe_data is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe not deleted.')
+    return APIResponse(
+         is_error=False,
+         status=200,
+         message="Recipe delete successfully",
+         data=None
+     )
+
+    
 
 
 

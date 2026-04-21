@@ -721,6 +721,14 @@
         "documentation": {}
     },
     {
+        "label": "soft_delete_recipe_db",
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "isExtraImport": true,
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
         "label": "uuid",
         "kind": 6,
         "isExtraImport": true,
@@ -1348,7 +1356,7 @@
         "kind": 2,
         "importPath": "app.crud.recipe",
         "description": "app.crud.recipe",
-        "peekOfCode": "def get_all_recipes_db(db: Session):\n    return db.query(Recipe).all()\ndef get_recipe_by_recipe_id_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    return recipe\ndef update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdate):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    if recipe_update_request.title and recipe_update_request.title.strip():\n        recipe.title = recipe_update_request.title.strip()\n    if recipe_update_request.description and recipe_update_request.description.strip():",
+        "peekOfCode": "def get_all_recipes_db(db: Session):\n    return db.query(Recipe).filter(Recipe.is_deleted == False)\ndef get_recipe_by_recipe_id_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id,Recipe.is_deleted == False).first()\n    return recipe\ndef update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdate):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    if recipe_update_request.title and recipe_update_request.title.strip():\n        recipe.title = recipe_update_request.title.strip()\n    if recipe_update_request.description and recipe_update_request.description.strip():",
         "detail": "app.crud.recipe",
         "documentation": {}
     },
@@ -1357,7 +1365,7 @@
         "kind": 2,
         "importPath": "app.crud.recipe",
         "description": "app.crud.recipe",
-        "peekOfCode": "def get_recipe_by_recipe_id_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    return recipe\ndef update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdate):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    if recipe_update_request.title and recipe_update_request.title.strip():\n        recipe.title = recipe_update_request.title.strip()\n    if recipe_update_request.description and recipe_update_request.description.strip():\n        recipe.description = recipe_update_request.description.strip()\n    if recipe_update_request.instructions and recipe_update_request.instructions.strip():",
+        "peekOfCode": "def get_recipe_by_recipe_id_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id,Recipe.is_deleted == False).first()\n    return recipe\ndef update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdate):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    if recipe_update_request.title and recipe_update_request.title.strip():\n        recipe.title = recipe_update_request.title.strip()\n    if recipe_update_request.description and recipe_update_request.description.strip():\n        recipe.description = recipe_update_request.description.strip()\n    if recipe_update_request.instructions and recipe_update_request.instructions.strip():",
         "detail": "app.crud.recipe",
         "documentation": {}
     },
@@ -1367,6 +1375,15 @@
         "importPath": "app.crud.recipe",
         "description": "app.crud.recipe",
         "peekOfCode": "def update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdate):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    if recipe_update_request.title and recipe_update_request.title.strip():\n        recipe.title = recipe_update_request.title.strip()\n    if recipe_update_request.description and recipe_update_request.description.strip():\n        recipe.description = recipe_update_request.description.strip()\n    if recipe_update_request.instructions and recipe_update_request.instructions.strip():\n         recipe.instructions = recipe_update_request.instructions.strip()\n    if recipe_update_request.ingredients:\n        recipe.ingredients = json.dumps(recipe_update_request.ingredients)",
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "soft_delete_recipe_db",
+        "kind": 2,
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "peekOfCode": "def soft_delete_recipe_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    recipe.is_deleted = True\n    db.add(recipe)\n    db.commit()\n    db.refresh(recipe)\n    return recipe",
         "detail": "app.crud.recipe",
         "documentation": {}
     },

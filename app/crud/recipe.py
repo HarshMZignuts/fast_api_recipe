@@ -22,10 +22,10 @@ def add_recipe_db(db: Session, recipe_request:RecipeCreate,user_id:UUID):
     return db_recipe
 
 def get_all_recipes_db(db: Session):
-    return db.query(Recipe).all()
+    return db.query(Recipe).filter(Recipe.is_deleted == False)
 
 def get_recipe_by_recipe_id_db(db:Session,recipe_id:UUID):
-    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id,Recipe.is_deleted == False).first()
     return recipe
 
 
@@ -48,3 +48,13 @@ def update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdat
     db.commit()
     db.refresh(recipe)
     return recipe
+
+def soft_delete_recipe_db(db:Session,recipe_id:UUID):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+    recipe.is_deleted = True
+
+    db.add(recipe)
+    db.commit()
+    db.refresh(recipe)
+    return recipe
+
