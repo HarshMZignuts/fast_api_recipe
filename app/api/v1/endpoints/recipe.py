@@ -6,7 +6,7 @@ from app.api.deps import get_db, get_current_user
 from typing import Annotated
 from starlette import status
 from app.schemas.recipe import RecipeCreate,RecipeResponse,RecipeUpdate
-from app.crud.recipe import add_recipe_db,get_all_recipes_db,get_recipe_by_recipe_id_db,update_recipe_db,soft_delete_recipe_db
+from app.crud.recipe import add_recipe_db,get_all_recipes_db,get_recipe_by_recipe_id_db,update_recipe_db,soft_delete_recipe_db,get_user_all_recipe_db
 from uuid import UUID
 from app.models.auth import User
 import json
@@ -50,6 +50,8 @@ async def get_all_recipes(db: db_dependancy,current_user:current_user_dependancy
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')
 
      recipes = get_all_recipes_db(db=db)
+     if recipes is None:
+         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe not found.')
      for r in recipes:
         r.ingredients = json.loads(r.ingredients)
      return APIResponse(
@@ -57,6 +59,25 @@ async def get_all_recipes(db: db_dependancy,current_user:current_user_dependancy
         status= 200,
         message="Recipe fetch successfully",
         data=recipes
+    )
+
+@router.get("/get-my-recipes",status_code=status.HTTP_200_OK,response_model=APIResponse[list[RecipeResponse]])
+async def get_my_recipes(db: db_dependancy,current_user:current_user_dependancy):
+    if current_user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')
+    
+    user_all_recipe_data = get_user_all_recipe_db(db=db,user_id=current_user.id)
+    if user_all_recipe_data is None:
+         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe not found.')
+    
+    for r in user_all_recipe_data:
+        r.ingredients = json.loads(r.ingredients)
+    
+    return APIResponse(
+        is_error=False,
+        status= 200,
+        message="Recipe fetch successfully",
+        data=user_all_recipe_data
     )
 
 @router.get("/{recipe_id}",status_code=status.HTTP_200_OK,response_model=APIResponse[RecipeResponse])
@@ -117,6 +138,10 @@ async def delete_recipe(db:db_dependancy,current_user:current_user_dependancy,re
          message="Recipe delete successfully",
          data=None
      )
+
+
+
+
 
     
 

@@ -729,6 +729,14 @@
         "documentation": {}
     },
     {
+        "label": "get_user_all_recipe_db",
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "isExtraImport": true,
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
         "label": "uuid",
         "kind": 6,
         "isExtraImport": true,
@@ -1383,7 +1391,16 @@
         "kind": 2,
         "importPath": "app.crud.recipe",
         "description": "app.crud.recipe",
-        "peekOfCode": "def soft_delete_recipe_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    recipe.is_deleted = True\n    db.add(recipe)\n    db.commit()\n    db.refresh(recipe)\n    return recipe",
+        "peekOfCode": "def soft_delete_recipe_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    recipe.is_deleted = True\n    db.add(recipe)\n    db.commit()\n    db.refresh(recipe)\n    return recipe\ndef get_user_all_recipe_db(db: Session,user_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.user_id == user_id,Recipe.is_deleted == False)\n    return recipe",
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_all_recipe_db",
+        "kind": 2,
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "peekOfCode": "def get_user_all_recipe_db(db: Session,user_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.user_id == user_id,Recipe.is_deleted == False)\n    return recipe",
         "detail": "app.crud.recipe",
         "documentation": {}
     },

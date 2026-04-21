@@ -58,3 +58,8 @@ def soft_delete_recipe_db(db:Session,recipe_id:UUID):
     db.refresh(recipe)
     return recipe
 
+def get_user_all_recipe_db(db: Session,user_id:UUID):
+    recipe = db.query(Recipe).filter(Recipe.user_id == user_id,Recipe.is_deleted == False)
+    return recipe
+
+
