@@ -496,7 +496,23 @@
         "documentation": {}
     },
     {
+        "label": "RecipeUpdate",
+        "importPath": "app.schemas.recipe",
+        "description": "app.schemas.recipe",
+        "isExtraImport": true,
+        "detail": "app.schemas.recipe",
+        "documentation": {}
+    },
+    {
         "label": "RecipeCreate",
+        "importPath": "app.schemas.recipe",
+        "description": "app.schemas.recipe",
+        "isExtraImport": true,
+        "detail": "app.schemas.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "RecipeUpdate",
         "importPath": "app.schemas.recipe",
         "description": "app.schemas.recipe",
         "isExtraImport": true,
@@ -513,6 +529,22 @@
     },
     {
         "label": "get_all_recipes_db",
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "isExtraImport": true,
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "get_recipe_by_recipe_id_db",
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "isExtraImport": true,
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "update_recipe_db",
         "importPath": "app.crud.recipe",
         "description": "app.crud.recipe",
         "isExtraImport": true,
@@ -1189,7 +1221,25 @@
         "kind": 2,
         "importPath": "app.crud.recipe",
         "description": "app.crud.recipe",
-        "peekOfCode": "def get_all_recipes_db(db: Session):\n    return db.query(Recipe).all()",
+        "peekOfCode": "def get_all_recipes_db(db: Session):\n    return db.query(Recipe).all()\ndef get_recipe_by_recipe_id_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    return recipe\ndef update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdate):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    if recipe_update_request.title and recipe_update_request.title.strip():\n        recipe.title = recipe_update_request.title.strip()\n    if recipe_update_request.description and recipe_update_request.description.strip():",
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "get_recipe_by_recipe_id_db",
+        "kind": 2,
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "peekOfCode": "def get_recipe_by_recipe_id_db(db:Session,recipe_id:UUID):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    return recipe\ndef update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdate):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    if recipe_update_request.title and recipe_update_request.title.strip():\n        recipe.title = recipe_update_request.title.strip()\n    if recipe_update_request.description and recipe_update_request.description.strip():\n        recipe.description = recipe_update_request.description.strip()\n    if recipe_update_request.instructions and recipe_update_request.instructions.strip():",
+        "detail": "app.crud.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "update_recipe_db",
+        "kind": 2,
+        "importPath": "app.crud.recipe",
+        "description": "app.crud.recipe",
+        "peekOfCode": "def update_recipe_db(db:Session,recipe_id:UUID,recipe_update_request:RecipeUpdate):\n    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()\n    if recipe_update_request.title and recipe_update_request.title.strip():\n        recipe.title = recipe_update_request.title.strip()\n    if recipe_update_request.description and recipe_update_request.description.strip():\n        recipe.description = recipe_update_request.description.strip()\n    if recipe_update_request.instructions and recipe_update_request.instructions.strip():\n         recipe.instructions = recipe_update_request.instructions.strip()\n    if recipe_update_request.ingredients:\n        recipe.ingredients = json.dumps(recipe_update_request.ingredients)",
         "detail": "app.crud.recipe",
         "documentation": {}
     },
@@ -1243,7 +1293,7 @@
         "kind": 6,
         "importPath": "app.schemas.recipe",
         "description": "app.schemas.recipe",
-        "peekOfCode": "class RecipeBase(BaseModel):\n    title: str = Field(..., min_length=3, max_length=100)\n    description: Optional[str] = None\n    ingredients: List[str]\n    instructions: str\n    cooking_time: Optional[int] = None\n    servings: Optional[int] = None\nclass RecipeCreate(RecipeBase):\n    pass\nclass RecipeResponse(RecipeBase):",
+        "peekOfCode": "class RecipeBase(BaseModel):\n    title: str = Field(..., min_length=3, max_length=100)\n    description: str | None = Field(default=None,min_length=3, max_length=300)\n    ingredients: List[str]\n    instructions: str\n    cooking_time: int | None = Field(default=None, gt=0)\n    servings: int | None = Field(default=None, gt=0)\nclass RecipeCreate(RecipeBase):\n    pass\nclass RecipeResponse(RecipeBase):",
         "detail": "app.schemas.recipe",
         "documentation": {}
     },
@@ -1252,7 +1302,7 @@
         "kind": 6,
         "importPath": "app.schemas.recipe",
         "description": "app.schemas.recipe",
-        "peekOfCode": "class RecipeCreate(RecipeBase):\n    pass\nclass RecipeResponse(RecipeBase):\n    id: UUID\n    user_id: UUID\n    created_at: datetime  \n    updated_at: datetime | None  \n    class Config:\n        from_attributes = True",
+        "peekOfCode": "class RecipeCreate(RecipeBase):\n    pass\nclass RecipeResponse(RecipeBase):\n    id: UUID\n    user_id: UUID\n    created_at: datetime  \n    updated_at: datetime | None  \n    class Config:\n        from_attributes = True\nclass RecipeUpdate(BaseModel):",
         "detail": "app.schemas.recipe",
         "documentation": {}
     },
@@ -1261,7 +1311,16 @@
         "kind": 6,
         "importPath": "app.schemas.recipe",
         "description": "app.schemas.recipe",
-        "peekOfCode": "class RecipeResponse(RecipeBase):\n    id: UUID\n    user_id: UUID\n    created_at: datetime  \n    updated_at: datetime | None  \n    class Config:\n        from_attributes = True",
+        "peekOfCode": "class RecipeResponse(RecipeBase):\n    id: UUID\n    user_id: UUID\n    created_at: datetime  \n    updated_at: datetime | None  \n    class Config:\n        from_attributes = True\nclass RecipeUpdate(BaseModel):\n    title: str | None = Field(default=None,min_length=3, max_length=100)\n    description: str | None = Field(default=None,min_length=3, max_length=300)",
+        "detail": "app.schemas.recipe",
+        "documentation": {}
+    },
+    {
+        "label": "RecipeUpdate",
+        "kind": 6,
+        "importPath": "app.schemas.recipe",
+        "description": "app.schemas.recipe",
+        "peekOfCode": "class RecipeUpdate(BaseModel):\n    title: str | None = Field(default=None,min_length=3, max_length=100)\n    description: str | None = Field(default=None,min_length=3, max_length=300)\n    ingredients: List[str] | None = Field(default=None)\n    instructions: str | None = Field(default=None,min_length=3, max_length=1000)\n    cooking_time: int | None = Field(default=None, gt=0)\n    servings: int | None = Field(default=None, gt=0)",
         "detail": "app.schemas.recipe",
         "documentation": {}
     },

@@ -1,11 +1,12 @@
+
 from fastapi import APIRouter, Depends,HTTPException
 from sqlalchemy.orm import Session
 from app.schemas.response import APIResponse
 from app.api.deps import get_db, get_current_user
 from typing import Annotated
 from starlette import status
-from app.schemas.recipe import RecipeCreate,RecipeResponse
-from app.crud.recipe import add_recipe_db,get_all_recipes_db
+from app.schemas.recipe import RecipeCreate,RecipeResponse,RecipeUpdate
+from app.crud.recipe import add_recipe_db,get_all_recipes_db,get_recipe_by_recipe_id_db,update_recipe_db
 from uuid import UUID
 from app.models.auth import User
 import json
@@ -57,4 +58,47 @@ async def get_all_recipes(db: db_dependancy,current_user:current_user_dependancy
         message="Recipe fetch successfully",
         data=recipes
     )
+
+@router.get("/{recipe_id}",status_code=status.HTTP_200_OK,response_model=APIResponse[RecipeResponse])
+async def get_recipe(db: db_dependancy,current_user:current_user_dependancy,recipe_id:UUID):
+     if current_user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')
+     
+     recipe = get_recipe_by_recipe_id_db(db=db,recipe_id=recipe_id)
+     if recipe is None:
+         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe not found.')
+     recipe.ingredients = json.loads(recipe.ingredients)
+     return APIResponse(
+         is_error=False,
+         status=200,
+         message="Recipe fetch successfully",
+         data=recipe
+     )
+
+@router.put("/{recipe_id}",status_code=status.HTTP_200_OK,response_model=APIResponse[RecipeResponse])
+async def update_recipe(db: db_dependancy,current_user:current_user_dependancy,recipe_update_request:RecipeUpdate,recipe_id:UUID):
+    if current_user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Authentication Failed')
+    recipe = get_recipe_by_recipe_id_db(db=db,recipe_id=recipe_id)
+    not_user_recipe = recipe.user_id != current_user.id
+    if recipe is None:
+         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe not found.')
+    if not_user_recipe:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='This recipe does not belong to you.')
+    
+    updated_recipe_data = update_recipe_db(db=db,recipe_id=recipe_id,recipe_update_request=recipe_update_request)
+    if updated_recipe_data is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Recipe not updated.')
+    updated_recipe_data.ingredients = json.loads(updated_recipe_data.ingredients)
+    return APIResponse(
+         is_error=False,
+         status=200,
+         message="Recipe update successfully",
+         data=updated_recipe_data
+     )
+
+    
+
+    
+
 
